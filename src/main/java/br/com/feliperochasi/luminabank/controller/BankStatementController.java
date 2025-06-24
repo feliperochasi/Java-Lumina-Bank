@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -23,10 +24,17 @@ public class BankStatementController {
         return ResponseEntity.ok(this.bankStatementService.listBankStatementByAccountNumber(numberAccount));
     }
 
+    @GetMapping("/transaction/{id}")
+    public ResponseEntity<DetailsBankStatementDTO> findTransactionById(@PathVariable Long id) {
+        return ResponseEntity.ok(this.bankStatementService.findTransactionById(id));
+    }
+
     @PostMapping()
     @Transactional
-    public ResponseEntity applyNewBankingMovement(@RequestBody @Valid BankMovementDTO dto) {
-        this.bankStatementService.applyNewBankingMovement(dto);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<DetailsBankStatementDTO> applyNewBankingMovement(@RequestBody @Valid BankMovementDTO dto, UriComponentsBuilder uriBuilder) {
+        var registredBankStatement = this.bankStatementService.applyNewBankingMovement(dto);
+        var uri = uriBuilder.path("/bank-statement/transaction/{id}").buildAndExpand(registredBankStatement.getId()).toUri();
+
+        return ResponseEntity.created(uri).body(new DetailsBankStatementDTO(registredBankStatement));
     }
 }

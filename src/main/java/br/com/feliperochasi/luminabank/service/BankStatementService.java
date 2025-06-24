@@ -22,7 +22,11 @@ public class BankStatementService {
     @Autowired
     private BankStatementRepository bankStatementRepository;
 
-    public void applyNewBankingMovement(@Valid BankMovementDTO dto) {
+    public DetailsBankStatementDTO findTransactionById(Long id) {
+        return new DetailsBankStatementDTO(bankStatementRepository.getReferenceById(id));
+    }
+
+    public BankStatement applyNewBankingMovement(@Valid BankMovementDTO dto) {
         Account accountClientOperator = findAccountByNumber(dto.originAccount());
         switch (dto.transactionType()) {
             case PAY -> accountClientOperator.pay(dto);
@@ -40,6 +44,7 @@ public class BankStatementService {
         var amountToOperator = dto.transactionType() ==  TransactionType.DEPOSIT ? dto.amount() : dto.amount() * -1;
         BankStatement newOperation = new BankStatement(accountClientOperator, dto.transactionType(), dto.description(), dto.reference(), amountToOperator);
         bankStatementRepository.save(newOperation);
+        return newOperation;
     }
 
     public List<DetailsBankStatementDTO> listBankStatementByAccountNumber(Long numberAccount) {
