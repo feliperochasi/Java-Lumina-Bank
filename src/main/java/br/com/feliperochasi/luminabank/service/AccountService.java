@@ -1,11 +1,13 @@
 package br.com.feliperochasi.luminabank.service;
 
 import br.com.feliperochasi.luminabank.dto.AccountRegisterDTO;
+import br.com.feliperochasi.luminabank.dto.DetailsAccountDTO;
 import br.com.feliperochasi.luminabank.model.Account;
 import br.com.feliperochasi.luminabank.model.Client;
 import br.com.feliperochasi.luminabank.repository.AccountRepository;
 import br.com.feliperochasi.luminabank.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Random;
@@ -23,7 +25,11 @@ public class AccountService {
     @Autowired
     private ClientRepository clientRepository;
 
-    public void createNewAccountForClient(AccountRegisterDTO dto) {
+    public DetailsAccountDTO findAccountByNumber(Long number) {
+        return  new DetailsAccountDTO(accountRepository.findByNumberEquals(number));
+    }
+
+    public Account createNewAccountForClient(AccountRegisterDTO dto) {
         Client clientForRegisterNewAccount = clientRepository.getReferenceById(dto.clientId());
 
         Long number;
@@ -35,6 +41,7 @@ public class AccountService {
 
         Account newAccount = new Account(clientForRegisterNewAccount, dto.typeAccount(), number, digit);
         accountRepository.save(newAccount);
+        return newAccount;
     }
 
     public void approveAccountClient(Long id) {
