@@ -6,7 +6,6 @@ import br.com.feliperochasi.luminabank.model.Client;
 import br.com.feliperochasi.luminabank.repository.AddressRepository;
 import br.com.feliperochasi.luminabank.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,25 +31,34 @@ public class ClientService {
         return new DetailsClientDTO(clientForReturn);
     }
 
-    public void createClient(ClientRegisterDTO dto) {
-        Client newClient = new Client(dto);
-        clientRepository.save(newClient);
+    public DetailsAddressDTO findAddressById(Long idAddress) {
+        Address addressForReturn = addressRepository.getReferenceById(idAddress);
+        return new DetailsAddressDTO(addressForReturn);
     }
 
-    public void createAddressForClient(AddressRegisterDTO dto) {
+    public Client createClient(ClientRegisterDTO dto) {
+        Client newClient = new Client(dto);
+        clientRepository.save(newClient);
+        return newClient;
+    }
+
+    public Address createAddressForClient(AddressRegisterDTO dto) {
         Client clientForAddress = clientRepository.getReferenceById(dto.clientId());
         Address newAddress = new Address(dto, clientForAddress);
         addressRepository.save(newAddress);
+        return newAddress;
     }
 
-    public void updateClient(ClientUpdateDTO dto) {
+    public DetailsClientDTO updateClient(ClientUpdateDTO dto) {
         Client clientForUpdate = clientRepository.getReferenceById(dto.clientId());
         clientForUpdate.updateInfoClient(dto);
+        return new DetailsClientDTO(clientForUpdate);
     }
 
-    public void updateAddressOfClient(AddressUpdateClient dto) {
+    public DetailsAddressDTO updateAddressOfClient(AddressUpdateClient dto) {
         Address addressForUpdate = addressRepository.getReferenceById(dto.addressId());
         addressForUpdate.updateInfoAddress(dto);
+        return new DetailsAddressDTO(addressForUpdate);
     }
 
     public void deleteAddress(Long id) {

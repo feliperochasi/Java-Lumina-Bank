@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -41,7 +42,7 @@ public class Client {
     private int active;
 
     @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
-    private List<Address> address;
+    private List<Address> address = new ArrayList<>();;
 
     public Client(ClientRegisterDTO dto) {
         this.name = dto.name();
