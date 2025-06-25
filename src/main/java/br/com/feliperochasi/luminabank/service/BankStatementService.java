@@ -2,6 +2,7 @@ package br.com.feliperochasi.luminabank.service;
 
 import br.com.feliperochasi.luminabank.dto.BankMovementDTO;
 import br.com.feliperochasi.luminabank.dto.DetailsBankStatementDTO;
+import br.com.feliperochasi.luminabank.infra.ValidationException;
 import br.com.feliperochasi.luminabank.model.Account;
 import br.com.feliperochasi.luminabank.model.BankStatement;
 import br.com.feliperochasi.luminabank.model.TransactionType;
@@ -39,7 +40,6 @@ public class BankStatementService {
                 bankStatementRepository.save(operationReciver);
             }
             case WITHDRAWAL -> accountClientOperator.withdrawal(dto);
-            default -> throw new RuntimeException("Operacao invalida");
         }
         var amountToOperator = dto.transactionType() ==  TransactionType.DEPOSIT ? dto.amount() : dto.amount() * -1;
         BankStatement newOperation = new BankStatement(accountClientOperator, dto.transactionType(), dto.description(), dto.reference(), amountToOperator);
