@@ -33,11 +33,11 @@ public class BankStatementService {
             case PAY -> accountClientOperator.pay(dto);
             case DEPOSIT -> accountClientOperator.deposit(dto);
             case TRANSFER -> {
-                Account accountClientReciver = findAccountByNumber(dto.reciverNumber());
+                Account accountClientReceiver = findAccountByNumber(dto.reciverNumber());
                 accountClientOperator.transfer(dto);
-                accountClientReciver.deposit(dto);
-                BankStatement operationReciver = new BankStatement(accountClientReciver, dto.transactionType(), "Transferencia recebida pelo sistema de conta interna", "Transferencia", dto.amount());
-                bankStatementRepository.save(operationReciver);
+                accountClientReceiver.deposit(dto);
+                BankStatement operationReceiver = new BankStatement(accountClientReceiver, dto.transactionType(), "Transferencia recebida pelo sistema de conta interna", "Transferencia", dto.amount());
+                bankStatementRepository.save(operationReceiver);
             }
             case WITHDRAWAL -> accountClientOperator.withdrawal(dto);
         }
